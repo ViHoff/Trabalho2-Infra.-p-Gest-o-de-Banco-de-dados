@@ -1,0 +1,66 @@
+
+---------------------------------------------------------------------------------------------------------
+CREATE KEYSPACE "passenger_queries" 
+  WITH REPLICATION = {
+    'class' : 'SimpleStrategy',
+    'replication_factor' : 1
+  }
+AND DURABLE_WRITES = false; 
+
+USE "passenger_queries";
+
+CREATE TABLE "passenger_queries"."passenger_lastname" (
+  "lastname" text,
+  "passenger_id" text,
+  "first_name" text,
+  "email" text,
+  "phone" text,
+  PRIMARY KEY ("lastname", "passenger_id")
+)
+WITH CLUSTERING ORDER BY ("passenger_id" ASC);
+
+CREATE TABLE "passenger_queries"."bookings_by_passenger" (
+  "passenger_id" text,
+  "flight_departure" timestamp,
+  "flightno" text,
+  "booking_id" int,
+  "seat" text,
+  "origin_airport" text,
+  "destination_airport" text,
+  PRIMARY KEY ("passenger_id", "flight_departure")
+)
+WITH CLUSTERING ORDER BY ("flight_departure" DESC);
+
+---------------------------------------------------------------------------------------------------------
+CREATE KEYSPACE "airport_operations" 
+  WITH REPLICATION = {
+    'class' : 'SimpleStrategy',
+    'replication_factor' : 1
+  }
+AND DURABLE_WRITES = false; 
+
+USE "airport_operations";
+
+CREATE TABLE "airport_operations"."flights_by_airport_date" (
+  "origin_airport" text,
+  "flight_date" date,
+  "flight_departure" timestamp,
+  "flightno" text,
+  "destination_airport" text,
+  "airline_name" text,
+  PRIMARY KEY (("origin_airport", "flight_date"), "flight_departure")
+)
+WITH CLUSTERING ORDER BY ("flight_departure" ASC);
+
+CREATE TABLE "airport_operations"."passengers_by_flight" (
+  "flightno" text,
+  "flight_date" date,
+  "seat" text,
+  "passenger_id" text,
+  "lastname" text,
+  "firstname" text,
+  "booking_id" int,
+  PRIMARY KEY (("flightno", "flight_date"), "seat")
+)
+WITH CLUSTERING ORDER BY ("seat" ASC);
+---------------------------------------------------------------------------------------------------------
